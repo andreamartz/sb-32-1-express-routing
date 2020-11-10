@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { convertAndValidateNumsArray, mean } = require('./helpers');
+const { convertAndValidateNumsArray, mean, median } = require('./helpers');
 const ExpressError = require('./expressError');
 
 
@@ -11,36 +11,49 @@ app.get('/mean', function(req, res, next) {
     if (!req.query.nums) {
       throw new ExpressError("nums are required", 400);
     }
+    // create an array of strings, splitting on commas
     let numsAsStrings = (req.query.nums).split(',');
 
     // check if there are non-numbers in the array
     nums = convertAndValidateNumsArray(numsAsStrings);
-    console.log("nums returned: ", nums);
-    console.log(nums instanceof Error);
     if (nums instanceof Error) {
       throw new ExpressError(nums.message, 400);
     };
 
     // do operation and save result as 'value'
     const value = mean(nums);
-    console.log("value: ", value);
     const result = {operation, value};
-    console.log("result: ", result);
     return res.json(result);
   } catch (err) {
     next(err);
   }
 });
 
-// app.get('/median', function(req, res) {
-//   const operation = "median";
-//   const {nums} = req.query;
-//   // do operation and save result as 'value'
-//   const value = operation(nums);
-//   const result = {operation, value};
-//   return res.json();
-// });
 
+app.get('/median', function(req, res, next) {
+  const operation = "median";
+  try {
+    // if no nums query key was passed
+    if (!req.query.nums) {
+      throw new ExpressError("nums are required", 400);
+    }
+    // create an array of strings, splitting on commas
+    let numsAsStrings = (req.query.nums).split(',');
+
+    // check if there are non-numbers in the array
+    nums = convertAndValidateNumsArray(numsAsStrings);
+    if (nums instanceof Error) {
+      throw new ExpressError(nums.message, 400);
+    };
+
+    // do operation and save result as 'value'
+    const value = median(nums);
+    const result = {operation, value};
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
 // app.get('/mode', function(req, res) {
 //   const operation = "mode";
 //   const {nums} = req.query;
@@ -49,6 +62,32 @@ app.get('/mean', function(req, res, next) {
 //   const result = {operation, value};
 //   return res.json();
 // });
+
+app.get('/mode', function(req, res, next) {
+  const operation = "mode";
+  try {
+    // if no nums query key was passed
+    if (!req.query.nums) {
+      throw new ExpressError("nums are required", 400);
+    }
+    // create an array of strings, splitting on commas
+    let numsAsStrings = (req.query.nums).split(',');
+
+    // check if there are non-numbers in the array
+    nums = convertAndValidateNumsArray(numsAsStrings);
+    if (nums instanceof Error) {
+      throw new ExpressError(nums.message, 400);
+    };
+
+    // do operation and save result as 'value'
+    const value = mode(nums);
+    const result = {operation, value};
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 // 404 handler: runs when no other route is matched
 // Does NOT match next(err) bc there are not 4 parameters
